@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/handlepwd.iml" filepath="$PROJECT_DIR$/.idea/handlepwd.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/password_hashing.iml" filepath="$PROJECT_DIR$/.idea/password_hashing.iml" />
     </modules>
   </component>
 </project>
