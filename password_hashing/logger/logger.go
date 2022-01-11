@@ -1,3 +1,4 @@
+//Package logger defines logging infrastructure and log destination.
 package logger
 
 //source https://www.honeybadger.io/blog/golang-logging/

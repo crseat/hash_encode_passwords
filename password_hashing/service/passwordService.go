@@ -1,3 +1,4 @@
+//Package service defines and implements the actions available to be performed by the user.
 package service
 
 import (
@@ -6,14 +7,15 @@ import (
 	"password_hashing/errs"
 )
 
+//PasswordService processes requests for new and existing hashes.
 type PasswordService interface {
-	NewPassword(request dto.NewHashRequest) (*dto.NewHashResponse, *errs.AppError)
+	NewHash(request dto.NewHashRequest) (*dto.NewHashResponse, *errs.AppError)
 }
 
-type DefaultAccountService struct {
+type DefaultPasswordService struct {
 	repo domain.HashRepository
 }
 
-func (s DefaultAccountService) NewAccount(req dto.NewHashRequest) (*dto.NewHashResponse, *errs.AppError) {
-	return
-}
+//func (s DefaultPasswordService) NewHash(req dto.NewHashRequest) (*dto.NewHashResponse, *errs.AppError) {
+//	return
+//}

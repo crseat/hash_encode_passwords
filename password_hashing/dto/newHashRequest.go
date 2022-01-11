@@ -1,3 +1,4 @@
+//Package dto implements the data transfer objects and validates the input
 package dto
 
 import (
@@ -9,7 +10,7 @@ type NewHashRequest struct {
 	password string
 }
 
-//Validate input from user
+//Validate the password that was passed in.
 func (r NewHashRequest) Validate() *errs.AppError {
 	if len(r.password) < 8 {
 		return errs.NewValidationError("Password must be at least 8 characters long")
@@ -23,6 +24,8 @@ func (r NewHashRequest) Validate() *errs.AppError {
 	return nil
 }
 
+//UppercaseAndNumberPresent takes in a password and iterates over it returning whether it contains an uppercase letter
+//and a number.
 func UppercaseAndNumberPresent(password string) bool {
 	uppercase := false
 	number := false
