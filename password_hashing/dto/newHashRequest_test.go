@@ -10,7 +10,7 @@ import (
 func Test_should_return_error_when_password_is_less_than_8_characters_long(t *testing.T) {
 	// Arrange
 	request := NewHashRequest{
-		password: "Ps2d",
+		PasswordString: "Ps2d",
 	}
 
 	// Act
@@ -29,7 +29,7 @@ func Test_should_return_error_when_password_is_less_than_8_characters_long(t *te
 func Test_should_return_error_when_password_is_more_than_50_characters_long(t *testing.T) {
 	// Arrange
 	request := NewHashRequest{
-		password: "Password1234567891234567891234567891234566778912345678uih",
+		PasswordString: "Password1234567891234567891234567891234566778912345678uih",
 	}
 
 	// Act
@@ -48,7 +48,7 @@ func Test_should_return_error_when_password_is_more_than_50_characters_long(t *t
 func Test_should_return_error_when_password_does_not_have_a_number(t *testing.T) {
 	// Arrange
 	request := NewHashRequest{
-		password: "Password",
+		PasswordString: "Password",
 	}
 
 	// Act
@@ -67,7 +67,7 @@ func Test_should_return_error_when_password_does_not_have_a_number(t *testing.T)
 func Test_should_return_error_when_password_does_not_have_a_capital_letter(t *testing.T) {
 	// Arrange
 	request := NewHashRequest{
-		password: "password12",
+		PasswordString: "password12",
 	}
 
 	// Act
@@ -86,7 +86,7 @@ func Test_should_return_error_when_password_does_not_have_a_capital_letter(t *te
 func Test_should_return_error_when_error_is_not_nil_with_proper_password(t *testing.T) {
 	// Arrange
 	request := NewHashRequest{
-		password: "Password12",
+		PasswordString: "Password12",
 	}
 
 	// Act

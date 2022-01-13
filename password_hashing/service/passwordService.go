@@ -16,6 +16,26 @@ type DefaultPasswordService struct {
 	repo domain.HashRepository
 }
 
-//func (s DefaultPasswordService) NewHash(req dto.NewHashRequest) (*dto.NewHashResponse, *errs.AppError) {
-//	return
-//}
+// NewHash takes in a NewHashRequest dto and passes the information to the domain in order to convert and save.
+func (service DefaultPasswordService) NewHash(req dto.NewHashRequest) (*dto.NewHashResponse, *errs.AppError) {
+	err := req.Validate()
+	if err != nil {
+		return nil, err
+	}
+	password := domain.Password{
+		PasswordString: req.PasswordString,
+		Id:             req.Id,
+	}
+	hash := domain.Hash{HashString: "", Id: req.Id}
+	newPassword, err := service.repo.Save(password, hash)
+	if err != nil {
+		return nil, err
+	}
+	response := newPassword.ToNewHashResponseDto()
+
+	return &response, nil
+}
+
+func NewPasswordService(repository domain.HashRepository) DefaultPasswordService {
+	return DefaultPasswordService{repository}
+}

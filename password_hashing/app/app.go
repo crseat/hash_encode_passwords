@@ -9,4 +9,6 @@ import (
 //Start the server on the given port.
 func Start(port string) {
 	logger.InfoLogger.Println(fmt.Sprintf("Starting server on localhost:%s ...", port))
+
+	//starting the server
 }

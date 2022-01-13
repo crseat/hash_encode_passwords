@@ -7,17 +7,24 @@ import (
 )
 
 type Password struct {
-	Id   int
-	Hash string
+	PasswordString string
+	Id             int
 }
 
-//ToNewHashResponseDto takes a Password object and converts it into an appropriate response to the client.
-func (p Password) ToNewHashResponseDto() dto.NewHashResponse {
-	return dto.NewHashResponse{Hash: p.Hash}
+type Hash struct {
+	HashString string
+	Id         int
 }
 
-//HashRepository defines the interface for saving and retrieving Password objects.
+//ToNewHashResponseDto takes a Hash object and converts it into an appropriate response to the client.
+func (hash Hash) ToNewHashResponseDto() dto.NewHashResponse {
+	return dto.NewHashResponse{Hash: hash.HashString}
+}
+
+//HashRepository defines the interface for saving and retrieving Password and Hash objects.
 type HashRepository interface {
-	Save(Password) (*Password, *errs.AppError)
-	FindBy(identifier int) (*Password, *errs.AppError)
+	Save(Password) (*Hash, *errs.AppError)
+	FindBy(identifier int) (*Hash, *errs.AppError)
+	UpdateHash(identifier int) *errs.AppError
+	HashPassword(password Password) *errs.AppError
 }
