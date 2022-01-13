@@ -8,6 +8,12 @@ type AppError struct {
 	Message string
 }
 
+func (e AppError) AsMessage() *AppError {
+	return &AppError{
+		Message: e.Message,
+	}
+}
+
 func NewValidationError(message string) *AppError {
 	return &AppError{
 		Message: message,

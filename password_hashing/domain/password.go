@@ -8,12 +8,12 @@ import (
 
 type Password struct {
 	PasswordString string
-	Id             int
+	Id             int64
 }
 
 type Hash struct {
 	HashString string
-	Id         int
+	Id         int64
 }
 
 //ToNewHashResponseDto takes a Hash object and converts it into an appropriate response to the client.
@@ -22,8 +22,8 @@ func (hash Hash) ToNewHashResponseDto() dto.NewHashResponse {
 }
 
 //HashRepository defines the interface for saving and retrieving Password and Hash objects.
-type HashRepository interface {
-	Save(Password) (*Hash, *errs.AppError)
+type HashRepositoryI interface {
+	Save(Password, Hash) (*Hash, *errs.AppError)
 	FindBy(identifier int) (*Hash, *errs.AppError)
 	UpdateHash(identifier int) *errs.AppError
 	HashPassword(password Password) *errs.AppError

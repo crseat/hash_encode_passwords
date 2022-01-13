@@ -3,32 +3,30 @@ package app
 import (
 	"encoding/json"
 	"net/http"
-	"password_hashing/domain"
-	"password_hashing/service"
+	"password_hashing/errs"
 	"path"
 	"strings"
 )
 
 type Router struct {
+	PasswordHandler *PasswordHandler
+	StatsHandler    *StatsHandler
 }
 
 //define routes
-func serve(w http.ResponseWriter, r *http.Request) {
-
-	//wiring
-	hashRepository := domain.NewHashRepository()
-	passwordHandler := PasswordHandlers{service: service.NewPasswordService(hashRepository)}
+func (router *Router) ServeHTTP(w http.ResponseWriter, r *http.Request, ph PasswordHandler) {
 
 	//define routes
 	var head string
 	head, r.URL.Path = shiftPath(r.URL.Path)
 	switch head {
 	case "hash":
-		passwordHandler.service.NewHash()
+		ph.NewPassword(w, r)
 	case "stats":
-		serveContact(w, r)
+		//serveContact(w, r)
 	default:
-		writeResponse(w, http.StatusNotFound, head)
+		appError := errs.NewValidationError("Please provide a valid endpoint")
+		writeResponse(w, http.StatusNotFound, appError.AsMessage())
 	}
 }
 
@@ -45,7 +43,7 @@ func shiftPath(p string) (head, tail string) {
 }
 
 // writeResponse formats all http responses to client into json
-func writeResponse(writer http.ResponseWriter, code int, data string) {
+func writeResponse(writer http.ResponseWriter, code int, data interface{}) {
 	// We need to define the header here or the json/xml response will come across as plain text
 	writer.Header().Add("Content-Type", "application/json")
 	writer.WriteHeader(code)

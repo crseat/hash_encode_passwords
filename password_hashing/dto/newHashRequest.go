@@ -8,7 +8,7 @@ import (
 
 type NewHashRequest struct {
 	PasswordString string
-	Id             int
+	Id             int64
 }
 
 //Validate the password that was passed in.
