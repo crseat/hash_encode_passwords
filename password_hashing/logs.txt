@@ -1,1 +1,73 @@
-INFO: 2022/01/11 10:31:40 app.go:11: Starting server on localhost:8000 ...
+INFO: 2022/01/13 14:07:57 app.go:15: Starting server on localhost:8000 ...
+INFO: 2022/01/13 14:10:34 app.go:15: Starting server on localhost:8000 ...
+INFO: 2022/01/13 14:11:55 app.go:15: Starting server on localhost:8000 ...
+INFO: 2022/01/13 14:12:01 router.go:29: password
+INFO: 2022/01/13 14:14:58 router.go:29: path
+INFO: 2022/01/13 15:05:25 app.go:15: Starting server on localhost:8000 ...
+INFO: 2022/01/13 15:05:31 app.go:15: Starting server on localhost:8000 ...
+INFO: 2022/01/13 15:12:27 router.go:29: 
+INFO: 2022/01/13 15:23:37 app.go:15: Starting server on localhost:8000 ...
+INFO: 2022/01/13 15:23:45 router.go:27: test =  hash
+INFO: 2022/01/13 15:23:45 router.go:35: /
+INFO: 2022/01/13 15:24:38 app.go:15: Starting server on localhost:8000 ...
+INFO: 2022/01/13 15:24:47 router.go:27: test =  testtest
+INFO: 2022/01/13 15:27:06 app.go:15: Starting server on localhost:8000 ...
+DEBUG: 2022/01/13 15:27:09 router.go:27: test =  testtest
+DEBUG: 2022/01/13 15:27:17 router.go:27: test =  
+DEBUG: 2022/01/13 15:27:28 router.go:27: test =  
+INFO: 2022/01/13 15:33:28 app.go:15: Starting server on localhost:8000 ...
+DEBUG: 2022/01/13 15:33:36 router.go:27: invalid_data =  test
+DEBUG: 2022/01/13 15:33:39 router.go:27: invalid_data =  
+DEBUG: 2022/01/13 15:33:42 router.go:27: invalid_data =  
+DEBUG: 2022/01/13 15:33:50 router.go:27: invalid_data =  g
+DEBUG: 2022/01/13 15:33:54 router.go:27: invalid_data =  
+INFO: 2022/01/13 15:33:54 router.go:38: Attempted endpoint =  
+DEBUG: 2022/01/13 15:34:07 router.go:27: invalid_data =  
+INFO: 2022/01/13 15:34:07 router.go:38: Attempted endpoint =  
+DEBUG: 2022/01/13 15:34:10 router.go:27: invalid_data =  
+INFO: 2022/01/13 15:36:50 app.go:15: Starting server on localhost:8000 ...
+DEBUG: 2022/01/13 15:36:59 router.go:27: invalid_data =  
+INFO: 2022/01/13 15:45:17 app.go:15: Starting server on localhost:8000 ...
+DEBUG: 2022/01/13 15:45:22 router.go:27: invalid_data =  
+INFO: 2022/01/13 15:56:25 app.go:15: Starting server on localhost:8000 ...
+DEBUG: 2022/01/13 15:56:27 router.go:27: invalid_data =  
+DEBUG: 2022/01/13 15:56:34 router.go:27: invalid_data =  
+DEBUG: 2022/01/13 15:56:35 router.go:27: invalid_data =  
+DEBUG: 2022/01/13 15:56:35 router.go:27: invalid_data =  
+DEBUG: 2022/01/13 15:56:35 router.go:27: invalid_data =  
+DEBUG: 2022/01/13 15:56:36 router.go:27: invalid_data =  
+DEBUG: 2022/01/13 15:56:36 router.go:27: invalid_data =  
+DEBUG: 2022/01/13 15:56:36 router.go:27: invalid_data =  
+DEBUG: 2022/01/13 15:56:36 router.go:27: invalid_data =  
+DEBUG: 2022/01/13 15:56:36 router.go:27: invalid_data =  
+DEBUG: 2022/01/13 15:56:36 router.go:27: invalid_data =  
+INFO: 2022/01/13 15:57:49 app.go:15: Starting server on localhost:8000 ...
+DEBUG: 2022/01/13 15:57:52 router.go:27: invalid_data =  
+DEBUG: 2022/01/13 15:57:53 router.go:27: invalid_data =  
+DEBUG: 2022/01/13 15:57:54 router.go:27: invalid_data =  
+DEBUG: 2022/01/13 15:57:54 router.go:27: invalid_data =  
+DEBUG: 2022/01/13 15:57:54 router.go:27: invalid_data =  
+DEBUG: 2022/01/13 15:57:55 router.go:27: invalid_data =  
+INFO: 2022/01/13 15:57:55 router.go:38: Attempted endpoint =  
+DEBUG: 2022/01/13 15:57:55 router.go:27: invalid_data =  
+INFO: 2022/01/13 15:57:55 router.go:38: Attempted endpoint =  
+DEBUG: 2022/01/13 15:57:56 router.go:27: invalid_data =  
+INFO: 2022/01/13 15:57:56 router.go:38: Attempted endpoint =  
+DEBUG: 2022/01/13 15:57:56 router.go:27: invalid_data =  
+INFO: 2022/01/13 15:57:56 router.go:38: Attempted endpoint =  
+DEBUG: 2022/01/13 15:57:56 router.go:27: invalid_data =  
+INFO: 2022/01/13 15:57:56 router.go:38: Attempted endpoint =  
+DEBUG: 2022/01/13 15:57:56 router.go:27: invalid_data =  
+INFO: 2022/01/13 15:57:56 router.go:38: Attempted endpoint =  
+DEBUG: 2022/01/13 15:57:59 router.go:27: invalid_data =  
+DEBUG: 2022/01/13 15:58:00 router.go:27: invalid_data =  
+DEBUG: 2022/01/13 15:58:00 router.go:27: invalid_data =  
+DEBUG: 2022/01/13 15:58:01 router.go:27: invalid_data =  
+DEBUG: 2022/01/13 15:58:02 router.go:27: invalid_data =  
+DEBUG: 2022/01/13 15:58:02 router.go:27: invalid_data =  
+DEBUG: 2022/01/13 15:58:02 router.go:27: invalid_data =  
+DEBUG: 2022/01/13 15:58:02 router.go:27: invalid_data =  
+DEBUG: 2022/01/13 15:58:02 router.go:27: invalid_data =  
+DEBUG: 2022/01/13 15:58:03 router.go:27: invalid_data =  
+DEBUG: 2022/01/13 15:58:03 router.go:27: invalid_data =  
+DEBUG: 2022/01/13 15:58:03 router.go:27: invalid_data =  

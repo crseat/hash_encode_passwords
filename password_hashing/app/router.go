@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"password_hashing/errs"
+	"password_hashing/logger"
 	"path"
 	"strings"
 )
@@ -14,19 +15,29 @@ type Router struct {
 }
 
 //define routes
-func (router *Router) ServeHTTP(w http.ResponseWriter, r *http.Request, ph PasswordHandler) {
+func (router *Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
-	//define routes
 	var head string
+	var invalid_data string
+	//get endpoint
 	head, r.URL.Path = shiftPath(r.URL.Path)
-	switch head {
-	case "hash":
-		ph.NewPassword(w, r)
-	case "stats":
-		//serveContact(w, r)
-	default:
-		appError := errs.NewValidationError("Please provide a valid endpoint")
-		writeResponse(w, http.StatusNotFound, appError.AsMessage())
+
+	//check for invalid extra data
+	invalid_data, r.URL.Path = shiftPath(r.URL.Path)
+	logger.DebugLogger.Println("invalid_data = ", invalid_data)
+	if invalid_data != "" {
+		invalidEndpointError(w)
+	} else {
+		//define routes
+		switch head {
+		case "hash":
+			router.PasswordHandler.NewPassword(w, r)
+		case "stats":
+			//serveContact(w, r)
+		default:
+			logger.InfoLogger.Println("Attempted endpoint = ", head)
+			invalidEndpointError(w)
+		}
 	}
 }
 
@@ -40,6 +51,11 @@ func shiftPath(p string) (head, tail string) {
 		return p[1:], "/"
 	}
 	return p[1:i], p[i:]
+}
+
+func invalidEndpointError(w http.ResponseWriter) {
+	appError := errs.NewValidationError("Please provide a valid endpoint")
+	writeResponse(w, http.StatusNotFound, appError.AsMessage())
 }
 
 // writeResponse formats all http responses to client into json

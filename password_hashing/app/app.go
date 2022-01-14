@@ -3,6 +3,8 @@ package app
 
 import (
 	"fmt"
+	"log"
+	"net/http"
 	"password_hashing/domain"
 	"password_hashing/logger"
 	"password_hashing/service"
@@ -13,9 +15,15 @@ func Start(port string) {
 	logger.InfoLogger.Println(fmt.Sprintf("Starting server on localhost:%s ...", port))
 
 	//wiring
-	newHashRepo := make(map[int]string)
+	newHashRepo := make(map[int64]string)
 	hashRepository := domain.NewHashRepository(newHashRepo)
 	passwordHandler := PasswordHandler{service: service.NewPasswordService(hashRepository)}
 
-	//starting the server
+	//Create Router object
+	router := &Router{
+		PasswordHandler: &passwordHandler,
+	}
+	address := "localhost"
+	log.Fatal(http.ListenAndServe(fmt.Sprintf("%s:%s", address, port), router))
+
 }

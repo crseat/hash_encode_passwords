@@ -49,7 +49,7 @@ func (ph PasswordHandler) NewPassword(w http.ResponseWriter, r *http.Request) {
 	if appError2 != nil {
 		writeResponse(w, appError2.Code, appError2.AsMessage())
 	} else {
-		writeResponse(w, http.StatusOK, response)
+		writeResponse(w, http.StatusOK, response.HashId)
 	}
 
 }
