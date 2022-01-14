@@ -5,6 +5,7 @@ import (
 	"password_hashing/dto"
 	"password_hashing/errs"
 	"password_hashing/service"
+	"strconv"
 	"sync/atomic"
 )
 
@@ -39,17 +40,34 @@ func (ph PasswordHandler) NewPassword(w http.ResponseWriter, r *http.Request) {
 	}
 	passwordString := r.Form.Get("password")
 	if passwordString == "" {
-		appError1 := errs.NewValidationError("No password provided")
-		writeResponse(w, appError1.Code, appError1.AsMessage())
+		appError := errs.NewValidationError("No password provided")
+		writeResponse(w, appError.Code, appError.AsMessage())
+		return
 	}
 	request.PasswordString = passwordString
 
 	//Process Password
-	response, appError2 := ph.service.NewHash(request)
-	if appError2 != nil {
-		writeResponse(w, appError2.Code, appError2.AsMessage())
+	response, appError := ph.service.NewHash(request)
+	if appError != nil {
+		writeResponse(w, appError.Code, appError.AsMessage())
 	} else {
 		writeResponse(w, http.StatusOK, response.HashId)
 	}
+}
 
+func (ph PasswordHandler) FindBy(w http.ResponseWriter, id string) {
+	var request = dto.NewHashRequest{}
+	hashId, err := strconv.Atoi(id)
+	if err != nil {
+		appError := errs.NewValidationError("Please provide valid identifier. (Numbers only)")
+		writeResponse(w, appError.Code, appError.AsMessage())
+		return
+	}
+	request.Id = int64(hashId)
+	hash, appError := ph.service.FindById(request)
+	if appError != nil {
+		writeResponse(w, appError.Code, appError.AsMessage())
+	} else {
+		writeResponse(w, http.StatusOK, hash.HashString)
+	}
 }

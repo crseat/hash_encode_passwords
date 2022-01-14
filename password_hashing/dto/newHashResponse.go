@@ -1,5 +1,6 @@
 package dto
 
 type NewHashResponse struct {
-	HashId int64
+	HashString string
+	HashId     int64
 }

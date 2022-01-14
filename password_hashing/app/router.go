@@ -18,26 +18,25 @@ type Router struct {
 func (router *Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	var head string
-	var invalid_data string
+
 	//get endpoint
 	head, r.URL.Path = shiftPath(r.URL.Path)
-
-	//check for invalid extra data
-	invalid_data, r.URL.Path = shiftPath(r.URL.Path)
-	logger.DebugLogger.Println("invalid_data = ", invalid_data)
-	if invalid_data != "" {
-		invalidEndpointError(w)
-	} else {
-		//define routes
-		switch head {
-		case "hash":
+	//define routes
+	switch head {
+	case "hash":
+		//check for id
+		var identifier string
+		identifier, r.URL.Path = shiftPath(r.URL.Path)
+		if identifier != "" {
+			router.PasswordHandler.FindBy(w, identifier)
+		} else {
 			router.PasswordHandler.NewPassword(w, r)
-		case "stats":
-			//serveContact(w, r)
-		default:
-			logger.InfoLogger.Println("Attempted endpoint = ", head)
-			invalidEndpointError(w)
 		}
+	case "stats":
+		//serveContact(w, r)
+	default:
+		logger.InfoLogger.Println("Attempted endpoint = ", head)
+		invalidEndpointError(w)
 	}
 }
 

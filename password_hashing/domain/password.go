@@ -1,4 +1,4 @@
-//Package domain handles all the business logic (how passwords are created, stored, and changed)
+//Package domain handles all the business logic (how hashes are created, stored, and changed)
 package domain
 
 import (
@@ -25,6 +25,6 @@ func (hash Hash) ToNewHashResponseDto() dto.NewHashResponse {
 type HashRepository interface {
 	Save(Password, Hash) (*Hash, *errs.AppError)
 	FindBy(identifier int64) (*Hash, *errs.AppError)
-	UpdateHash(identifier int64) *errs.AppError
-	HashPassword(password Password) *errs.AppError
+	UpdateHash(int64, string)
+	HashPassword(password Password) (string, *errs.AppError)
 }

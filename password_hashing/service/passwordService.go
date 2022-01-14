@@ -10,6 +10,7 @@ import (
 //PasswordService processes requests for new and existing hashes.
 type PasswordService interface {
 	NewHash(request dto.NewHashRequest) (*dto.NewHashResponse, *errs.AppError)
+	FindById(req dto.NewHashRequest) (*dto.NewHashResponse, *errs.AppError)
 }
 
 type DefaultPasswordService struct {
@@ -33,6 +34,19 @@ func (service DefaultPasswordService) NewHash(req dto.NewHashRequest) (*dto.NewH
 	}
 	response := newPassword.ToNewHashResponseDto()
 
+	return &response, nil
+}
+
+func (service DefaultPasswordService) FindById(req dto.NewHashRequest) (*dto.NewHashResponse, *errs.AppError) {
+	err := req.ValidateId()
+	if err != nil {
+		return nil, err
+	}
+	targetHash, err := service.repo.FindBy(req.Id)
+	if err != nil {
+		return nil, err
+	}
+	response := targetHash.ToNewHashResponseDto()
 	return &response, nil
 }
 

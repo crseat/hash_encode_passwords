@@ -25,6 +25,11 @@ func (r NewHashRequest) Validate() *errs.AppError {
 	return nil
 }
 
+//Validate the hash identifier that was passed in.
+func (r NewHashRequest) ValidateId() *errs.AppError {
+	return nil
+}
+
 //UppercaseAndNumberPresent takes in a password and iterates over it returning whether it contains an uppercase letter
 //and a number.
 func UppercaseAndNumberPresent(password string) bool {
