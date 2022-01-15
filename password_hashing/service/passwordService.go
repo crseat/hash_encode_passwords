@@ -11,6 +11,7 @@ import (
 type PasswordService interface {
 	NewHash(request dto.NewHashRequest) (*dto.NewHashResponse, *errs.AppError)
 	FindById(req dto.NewHashRequest) (*dto.NewHashResponse, *errs.AppError)
+	GetStats() (*dto.NewStatsResponse, *errs.AppError)
 }
 
 type DefaultPasswordService struct {
@@ -28,6 +29,8 @@ func (service DefaultPasswordService) NewHash(req dto.NewHashRequest) (*dto.NewH
 		Id:             req.Id,
 	}
 	hash := domain.Hash{HashString: "", Id: req.Id}
+
+	//Call service to save the new password in our repo
 	newPassword, err := service.repo.Save(password, hash)
 	if err != nil {
 		return nil, err
@@ -48,6 +51,16 @@ func (service DefaultPasswordService) FindById(req dto.NewHashRequest) (*dto.New
 	}
 	response := targetHash.ToNewHashResponseDto()
 	return &response, nil
+}
+
+func (service DefaultPasswordService) GetStats() (*dto.NewStatsResponse, *errs.AppError) {
+	stats, err := service.repo.GetStats()
+	if err != nil {
+		return nil, err
+	}
+	response := stats.ToNewStatsResponseDto()
+	return &response, nil
+
 }
 
 func NewPasswordService(repository domain.HashRepository) DefaultPasswordService {

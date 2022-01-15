@@ -19,8 +19,8 @@ func (r NewHashRequest) Validate() *errs.AppError {
 	if len(r.PasswordString) > 50 {
 		return errs.NewValidationError("Password must be less than 50 characters long")
 	}
-	if !UppercaseAndNumberPresent(r.PasswordString) {
-		return errs.NewValidationError("Password must include a number and a capital letter")
+	if !UppercasePresent(r.PasswordString) {
+		return errs.NewValidationError("Password must include a capital letter")
 	}
 	return nil
 }
@@ -32,17 +32,9 @@ func (r NewHashRequest) ValidateId() *errs.AppError {
 
 //UppercaseAndNumberPresent takes in a password and iterates over it returning whether it contains an uppercase letter
 //and a number.
-func UppercaseAndNumberPresent(password string) bool {
-	uppercase := false
-	number := false
+func UppercasePresent(password string) bool {
 	for _, c := range password {
 		if unicode.IsUpper(c) {
-			uppercase = true
-		}
-		if unicode.IsNumber(c) {
-			number = true
-		}
-		if uppercase && number {
 			return true
 		}
 	}

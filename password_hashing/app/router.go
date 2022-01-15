@@ -11,7 +11,6 @@ import (
 
 type Router struct {
 	PasswordHandler *PasswordHandler
-	StatsHandler    *StatsHandler
 }
 
 //define routes
@@ -33,7 +32,15 @@ func (router *Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			router.PasswordHandler.NewPassword(w, r)
 		}
 	case "stats":
-		//serveContact(w, r)
+		//check for invalid data ex: localhost:8000/stats/anyData
+		var invalid_data string
+		invalid_data, r.URL.Path = shiftPath(r.URL.Path)
+		if invalid_data != "" {
+			invalidEndpointError(w)
+		} else {
+			// Call stats function
+			router.PasswordHandler.GetStats(w)
+		}
 	default:
 		logger.InfoLogger.Println("Attempted endpoint = ", head)
 		invalidEndpointError(w)
