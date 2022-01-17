@@ -57,4 +57,5 @@ Tests have been built with golangs built in testing package. In root directory o
 - I decided to include the 5 second delay in the stats average time calculation because in my opinion that represents processing time.
 - I considered several approaches to the routing including some regex strategies, but in the end I thought a "no router" approach was the most straight forward.
 - Because only the standard library was allowed I did not hook up a databsase so the hashes are lost once the server is shutdown. However, because of the hexagonal architecture, hooking up a DB would be trivial. I could have saved the hashes to a file and read them back in when the server started, but I could not in good conscience save password hashes to a local file even if just for an example program. 
+- If I was able to use 3rd party libraries I would have included more in depth testing of the services using gomock.
 - If I was to iterate on this I would add more debug logging functionality, and more error checking. 
