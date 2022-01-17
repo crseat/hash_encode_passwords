@@ -23,10 +23,6 @@ type DefaultPasswordService struct {
 
 // NewHash takes in a NewHashRequest dto and passes the information to the domain in order to convert and save.
 func (service DefaultPasswordService) NewHash(req dto.NewHashRequest, startTime time.Time, wg *sync.WaitGroup) (*dto.NewHashResponse, *errs.AppError) {
-	err := req.Validate()
-	if err != nil {
-		return nil, err
-	}
 	password := domain.Password{
 		PasswordString: req.PasswordString,
 		Id:             req.Id,
@@ -43,11 +39,9 @@ func (service DefaultPasswordService) NewHash(req dto.NewHashRequest, startTime 
 	return &response, nil
 }
 
+// FindById takes in a NewHashRequest, queries the repo for the hash using the corresponding id, and then converts
+// response into NewHashResponse
 func (service DefaultPasswordService) FindById(req dto.NewHashRequest) (*dto.NewHashResponse, *errs.AppError) {
-	err := req.ValidateId()
-	if err != nil {
-		return nil, err
-	}
 	targetHash, err := service.Repo.FindBy(req.Id)
 	if err != nil {
 		return nil, err
@@ -56,6 +50,7 @@ func (service DefaultPasswordService) FindById(req dto.NewHashRequest) (*dto.New
 	return &response, nil
 }
 
+// IncTotal calls the service to increment the counter for total amount of Post Requests
 func (service DefaultPasswordService) IncTotal() *errs.AppError {
 	err := service.Repo.IncTotal()
 	if err != nil {
@@ -64,6 +59,8 @@ func (service DefaultPasswordService) IncTotal() *errs.AppError {
 	return nil
 }
 
+// UpdateAverage takes in the start time of the POST request and calls the service to update average time taken to
+// process POST requests
 func (service DefaultPasswordService) UpdateAverage(startTime time.Time) *errs.AppError {
 	err := service.Repo.UpdateAverage(startTime)
 	if err != nil {
@@ -72,6 +69,7 @@ func (service DefaultPasswordService) UpdateAverage(startTime time.Time) *errs.A
 	return nil
 }
 
+// NewPasswordService creates new DefaultPasswordService using the passed in hashRepo
 func NewPasswordService(hashRepository domain.HashRepository) DefaultPasswordService {
 	return DefaultPasswordService{hashRepository}
 }

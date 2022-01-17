@@ -3,9 +3,7 @@ package app
 import (
 	"net/http"
 	"password_hashing/dto"
-	"password_hashing/errs"
 	"password_hashing/service"
-	"strconv"
 	"sync"
 	"time"
 )
@@ -15,6 +13,8 @@ type PasswordHandler struct {
 	statsService    service.StatsService
 }
 
+// NewPassword takes in the ResponseWriter the Request, the start time, and a pointer to the wait group. Validates the
+// password string and then sends it on to the password service to process.
 func (ph PasswordHandler) NewPassword(w http.ResponseWriter, r *http.Request, startTime time.Time, wg *sync.WaitGroup) {
 	var request = dto.NewHashRequest{}
 
@@ -29,13 +29,13 @@ func (ph PasswordHandler) NewPassword(w http.ResponseWriter, r *http.Request, st
 		return
 	}
 	passwordString := r.Form.Get("password")
-	if passwordString == "" {
-		appError := errs.NewValidationError("No password provided")
+	request.PasswordString = passwordString
+	appError := request.Validate()
+	if appError != nil {
 		ph.passwordService.UpdateAverage(startTime)
-		writeResponse(w, appError.Code, appError.AsMessage())
+		writeResponse(w, http.StatusBadRequest, appError.AsMessage())
 		return
 	}
-	request.PasswordString = passwordString
 
 	//Process Password
 	response, appError := ph.passwordService.NewHash(request, startTime, wg)
@@ -49,11 +49,12 @@ func (ph PasswordHandler) NewPassword(w http.ResponseWriter, r *http.Request, st
 	}
 }
 
+// FindBy takes in the ResponseWriter and the hash identifier. Validates the identifier then passes it on to the
+// password service to process
 func (ph PasswordHandler) FindBy(w http.ResponseWriter, id string) {
 	var request = dto.NewHashRequest{}
-	hashId, err := strconv.Atoi(id)
-	if err != nil {
-		appError := errs.NewValidationError("Please provide valid identifier. (Numbers only)")
+	hashId, appError := request.ValidateId(id)
+	if appError != nil {
 		writeResponse(w, appError.Code, appError.AsMessage())
 		return
 	}
@@ -66,6 +67,7 @@ func (ph PasswordHandler) FindBy(w http.ResponseWriter, id string) {
 	}
 }
 
+// GetStats takes in the ResponseWriter and hen calls the stats service to retrieve the current stats.
 func (ph PasswordHandler) GetStats(w http.ResponseWriter) {
 	stats, appError := ph.statsService.GetStats()
 	if appError != nil {

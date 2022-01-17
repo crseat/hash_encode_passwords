@@ -3,6 +3,7 @@ package dto
 
 import (
 	"password_hashing/errs"
+	"strconv"
 	"unicode"
 )
 
@@ -26,11 +27,16 @@ func (r NewHashRequest) Validate() *errs.AppError {
 }
 
 //Validate the hash identifier that was passed in.
-func (r NewHashRequest) ValidateId() *errs.AppError {
-	return nil
+func (r NewHashRequest) ValidateId(id string) (int, *errs.AppError) {
+	hashId, err := strconv.Atoi(id)
+	if err != nil {
+		appError := errs.NewValidationError("Please provide valid identifier. (Numbers only)")
+		return 0, appError
+	}
+	return hashId, nil
 }
 
-//UppercaseAndNumberPresent takes in a password and iterates over it returning whether it contains an uppercase letter
+//UppercasePresent takes in a password and iterates over it returning whether it contains an uppercase letter
 //and a number.
 func UppercasePresent(password string) bool {
 	for _, c := range password {

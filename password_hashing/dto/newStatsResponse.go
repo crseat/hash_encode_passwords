@@ -1,6 +1,6 @@
 package dto
 
 type NewStatsResponse struct {
-	Total   int64
-	Average int64
+	Total   int64 `json:"total"`
+	Average int64 `json:"average"`
 }
