@@ -4,12 +4,16 @@ import (
 	"crypto/sha512"
 	"encoding/base64"
 	"password_hashing/errs"
+	"password_hashing/logger"
+	"sync"
 	"sync/atomic"
 	"time"
 )
 
 type HashRepositoryMap struct {
-	hashes map[int64]string
+	Hashes  map[int64]string
+	Total   *int64
+	Average *int64
 }
 
 // Define and keep track of the password ids
@@ -27,24 +31,28 @@ func getId() int64 {
 }
 
 // Save takes a new Password object and enters the id into the map. Sends the string over to be hashed by HashPassword().
-func (hashRepo HashRepositoryMap) Save(password Password, hash Hash) (*Hash, *errs.AppError) {
+func (hashRepo HashRepositoryMap) Save(password Password, hash Hash, startTime time.Time, wg *sync.WaitGroup) (*Hash, *errs.AppError) {
 	incId()
 	passwordId := getId()
 	//set a temporary value for the hashString incase the user tries to query before 5 seconds
-	hashRepo.hashes[passwordId] = "Password hashing not yet complete"
+	hashRepo.Hashes[passwordId] = "Password hashing not yet complete"
 
 	// We only need the id to be returned to the when first saving new password
 	hash.HashString = ""
 	hash.Id = passwordId
 
 	// Hash password after 5 seconds
+	wg.Add(1)
 	time.AfterFunc(5*time.Second, func() {
+		// Ensures graceful shutdown
+		defer wg.Done()
 		hashString, err := hashRepo.HashPassword(password)
 		if err != nil {
+			logger.ErrorLogger.Println("Hashing error: ", err)
 			hashString = "There was an error while hashing password"
 		}
 		// Update the map with the calculated hash.
-		hashRepo.UpdateHash(passwordId, hashString)
+		hashRepo.UpdateHash(passwordId, hashString, startTime)
 	})
 
 	return &hash, nil
@@ -52,14 +60,15 @@ func (hashRepo HashRepositoryMap) Save(password Password, hash Hash) (*Hash, *er
 
 func (hashRepo HashRepositoryMap) FindBy(identifier int64) (*Hash, *errs.AppError) {
 	hash := Hash{
-		HashString: hashRepo.hashes[identifier],
+		HashString: hashRepo.Hashes[identifier],
 		Id:         identifier,
 	}
 	return &hash, nil
 }
 
-func (hashRepo HashRepositoryMap) UpdateHash(identifier int64, hashString string) {
-	hashRepo.hashes[identifier] = hashString
+func (hashRepo HashRepositoryMap) UpdateHash(identifier int64, hashString string, startTime time.Time) {
+	hashRepo.Hashes[identifier] = hashString
+	hashRepo.UpdateAverage(startTime)
 }
 
 func (hashRepo HashRepositoryMap) HashPassword(password Password) (string, *errs.AppError) {
@@ -68,14 +77,32 @@ func (hashRepo HashRepositoryMap) HashPassword(password Password) (string, *errs
 	return hashEncoded, nil
 }
 
-func NewHashRepository(passwords map[int64]string) HashRepositoryMap {
-	return HashRepositoryMap{hashes: passwords}
-}
-
 func (hashRepo HashRepositoryMap) GetStats() (*Stats, *errs.AppError) {
 	stats := Stats{
-		Total:   getId(),
-		Average: 0,
+		Total:   *hashRepo.Total,
+		Average: *hashRepo.Average,
 	}
 	return &stats, nil
+}
+func (hashRepo HashRepositoryMap) IncTotal() *errs.AppError {
+	*hashRepo.Total += 1
+	return nil
+}
+
+func (hashRepo HashRepositoryMap) UpdateAverage(startTime time.Time) *errs.AppError {
+	duration := time.Now().Sub(startTime)
+	//to calculate the new average after then nth number, you multiply the old average by n−1, add the new number,
+	//and divide the total by n.
+	newAverage := ((*hashRepo.Average * (*hashRepo.Total - 1)) + duration.Microseconds()) / *hashRepo.Total
+	*hashRepo.Average = newAverage
+	return nil
+}
+
+func NewHashRepository() HashRepositoryMap {
+	//return HashRepositoryMap{Hashes: passwords}
+	return HashRepositoryMap{
+		Hashes:  make(map[int64]string),
+		Total:   new(int64),
+		Average: new(int64),
+	}
 }

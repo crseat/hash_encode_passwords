@@ -5,21 +5,24 @@ import (
 	"password_hashing/domain"
 	"password_hashing/dto"
 	"password_hashing/errs"
+	"sync"
+	"time"
 )
 
 //PasswordService processes requests for new and existing hashes.
 type PasswordService interface {
-	NewHash(request dto.NewHashRequest) (*dto.NewHashResponse, *errs.AppError)
+	NewHash(dto.NewHashRequest, time.Time, *sync.WaitGroup) (*dto.NewHashResponse, *errs.AppError)
 	FindById(req dto.NewHashRequest) (*dto.NewHashResponse, *errs.AppError)
-	GetStats() (*dto.NewStatsResponse, *errs.AppError)
+	IncTotal() *errs.AppError
+	UpdateAverage(startTime time.Time) *errs.AppError
 }
 
 type DefaultPasswordService struct {
-	repo domain.HashRepository
+	Repo domain.HashRepository
 }
 
 // NewHash takes in a NewHashRequest dto and passes the information to the domain in order to convert and save.
-func (service DefaultPasswordService) NewHash(req dto.NewHashRequest) (*dto.NewHashResponse, *errs.AppError) {
+func (service DefaultPasswordService) NewHash(req dto.NewHashRequest, startTime time.Time, wg *sync.WaitGroup) (*dto.NewHashResponse, *errs.AppError) {
 	err := req.Validate()
 	if err != nil {
 		return nil, err
@@ -31,7 +34,7 @@ func (service DefaultPasswordService) NewHash(req dto.NewHashRequest) (*dto.NewH
 	hash := domain.Hash{HashString: "", Id: req.Id}
 
 	//Call service to save the new password in our repo
-	newPassword, err := service.repo.Save(password, hash)
+	newPassword, err := service.Repo.Save(password, hash, startTime, wg)
 	if err != nil {
 		return nil, err
 	}
@@ -45,7 +48,7 @@ func (service DefaultPasswordService) FindById(req dto.NewHashRequest) (*dto.New
 	if err != nil {
 		return nil, err
 	}
-	targetHash, err := service.repo.FindBy(req.Id)
+	targetHash, err := service.Repo.FindBy(req.Id)
 	if err != nil {
 		return nil, err
 	}
@@ -53,16 +56,22 @@ func (service DefaultPasswordService) FindById(req dto.NewHashRequest) (*dto.New
 	return &response, nil
 }
 
-func (service DefaultPasswordService) GetStats() (*dto.NewStatsResponse, *errs.AppError) {
-	stats, err := service.repo.GetStats()
+func (service DefaultPasswordService) IncTotal() *errs.AppError {
+	err := service.Repo.IncTotal()
 	if err != nil {
-		return nil, err
+		return err
 	}
-	response := stats.ToNewStatsResponseDto()
-	return &response, nil
-
+	return nil
 }
 
-func NewPasswordService(repository domain.HashRepository) DefaultPasswordService {
-	return DefaultPasswordService{repository}
+func (service DefaultPasswordService) UpdateAverage(startTime time.Time) *errs.AppError {
+	err := service.Repo.UpdateAverage(startTime)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func NewPasswordService(hashRepository domain.HashRepository) DefaultPasswordService {
+	return DefaultPasswordService{hashRepository}
 }

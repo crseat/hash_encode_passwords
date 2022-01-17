@@ -7,16 +7,32 @@ import (
 	"password_hashing/logger"
 	"path"
 	"strings"
+	"sync"
+	"time"
 )
 
 type Router struct {
 	PasswordHandler *PasswordHandler
+	WaitGroup       *sync.WaitGroup
+	quitChan        *chan bool
 }
 
 //define routes
 func (router *Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	var head string
+	var startTime time.Time
+
+	//Check for invalid method.
+	if r.Method != http.MethodPost && r.Method != http.MethodGet {
+		invalidMethodError(w)
+	}
+
+	//Keep track of number of post request for stats
+	if r.Method == http.MethodPost {
+		router.PasswordHandler.passwordService.IncTotal()
+		startTime = time.Now()
+	}
 
 	//get endpoint
 	head, r.URL.Path = shiftPath(r.URL.Path)
@@ -29,20 +45,21 @@ func (router *Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		if identifier != "" {
 			router.PasswordHandler.FindBy(w, identifier)
 		} else {
-			router.PasswordHandler.NewPassword(w, r)
+			router.PasswordHandler.NewPassword(w, r, startTime, router.WaitGroup)
 		}
 	case "stats":
 		//check for invalid data ex: localhost:8000/stats/anyData
-		var invalid_data string
-		invalid_data, r.URL.Path = shiftPath(r.URL.Path)
-		if invalid_data != "" {
-			invalidEndpointError(w)
+		if existsInvalidData(w, r.URL.Path) {
+			return
 		} else {
 			// Call stats function
 			router.PasswordHandler.GetStats(w)
 		}
+	case "shutdown":
+		//Shutdown gracefully
+		shutdown(*router.quitChan)
 	default:
-		logger.InfoLogger.Println("Attempted endpoint = ", head)
+		logger.DebugLogger.Println("Attempted invlaid endpoint = ", head)
 		invalidEndpointError(w)
 	}
 }
@@ -59,9 +76,28 @@ func shiftPath(p string) (head, tail string) {
 	return p[1:i], p[i:]
 }
 
+func shutdown(quit chan bool) {
+	quit <- true
+}
+
+func invalidMethodError(w http.ResponseWriter) {
+	appError := errs.NewValidationError("Method is not supported")
+	writeResponse(w, http.StatusNotFound, appError.AsMessage())
+}
+
 func invalidEndpointError(w http.ResponseWriter) {
 	appError := errs.NewValidationError("Please provide a valid endpoint")
 	writeResponse(w, http.StatusNotFound, appError.AsMessage())
+}
+
+func existsInvalidData(w http.ResponseWriter, endpoint string) (err bool) {
+	var testData string
+	testData, endpoint = shiftPath(endpoint)
+	if testData != "" {
+		invalidEndpointError(w)
+		return true
+	}
+	return false
 }
 
 // writeResponse formats all http responses to client into json
