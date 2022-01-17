@@ -14,6 +14,7 @@ type DefaultStatsService struct {
 	Repo domain.StatsRepository
 }
 
+// GetStats calls the stats service to retrieve the current values for Total and Average POST request statistics
 func (service DefaultStatsService) GetStats() (*dto.NewStatsResponse, *errs.AppError) {
 	stats, err := service.Repo.GetStats()
 	if err != nil {
@@ -23,6 +24,7 @@ func (service DefaultStatsService) GetStats() (*dto.NewStatsResponse, *errs.AppE
 	return &response, nil
 }
 
+// NewStatsService creates a new DefaultStatsService from the passed in statsRepo.
 func NewStatsService(statsRepository domain.StatsRepository) DefaultStatsService {
 	return DefaultStatsService{statsRepository}
 }
