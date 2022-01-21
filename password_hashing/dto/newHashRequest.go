@@ -29,8 +29,8 @@ func (r NewHashRequest) Validate() *errs.AppError {
 //Validate the hash identifier that was passed in.
 func (r NewHashRequest) ValidateId(id string) (int, *errs.AppError) {
 	hashId, err := strconv.Atoi(id)
-	if err != nil {
-		appError := errs.NewValidationError("Please provide valid identifier. (Numbers only)")
+	if err != nil || hashId < 1 {
+		appError := errs.NewValidationError("Please provide valid identifier. (Numbers only greater than 0)")
 		return 0, appError
 	}
 	return hashId, nil
